@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GISServer.Core
 {
-    public class Class1
+    public class KeyValuePairs
     {
     }
 }

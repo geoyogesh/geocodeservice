@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace GISServer.Core.Catalog
 {
-    public class Catalog
+    public class Catalog : GISServer.Core.Base.JSONSerialization
     {
         public Catalog()
         {
@@ -24,5 +24,6 @@ namespace GISServer.Core.Catalog
 
         [JsonProperty("services")]
         public List<Service> Services { get; set; }
+
     }
 }

@@ -43,9 +43,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\JSONSerialization.cs" />
     <Compile Include="Catalog\Catalog.cs" />
     <Compile Include="Catalog\Service.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="Client\GeocodeService\Address.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\GeocodeService\AddressCandidate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\GeocodeService\Addresses.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\GeocodeService\AddressField.cs" />
+    <Compile Include="Client\GeocodeService\Root.cs" />
+    <Compile Include="Client\Geometry\Geometry.cs" />
+    <Compile Include="Client\Geometry\Point.cs" />
+    <Compile Include="Client\Geometry\SpatialReference.cs" />
+    <Compile Include="Client\Utilities\Serializer.cs" />
+    <Compile Include="KeyValuePairs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
