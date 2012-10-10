@@ -7,7 +7,7 @@ namespace GISServer.Core.Base
 {
     public class JSONSerialization
     {
-        public string toJSON()
+        public string toJson()
         {
             return GISServer.Core.Client.Utilities.Serializer.ToJson(this);
         }

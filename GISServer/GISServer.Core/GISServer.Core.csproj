@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute.cs" />
+    <Compile Include="Attributes.cs" />
     <Compile Include="Base\JSONSerialization.cs" />
     <Compile Include="Catalog\Catalog.cs" />
     <Compile Include="Catalog\Service.cs" />
@@ -56,11 +58,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Client\GeocodeService\AddressField.cs" />
+    <Compile Include="Client\GeocodeService\Mapquest\ReverseGeocodeResult.cs" />
     <Compile Include="Client\GeocodeService\Root.cs" />
     <Compile Include="Client\Geometry\Geometry.cs" />
     <Compile Include="Client\Geometry\Point.cs" />
     <Compile Include="Client\Geometry\SpatialReference.cs" />
     <Compile Include="Client\Utilities\Serializer.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="Exception.cs" />
     <Compile Include="KeyValuePairs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

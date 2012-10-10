@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GISServer.Core.Client.GeocodeService
 {
-    public class Root
+    public class Root : GISServer.Core.Base.JSONSerialization
     {
         [JsonProperty("serviceDescription")]
         public string ServiceDescription { get; set; }
@@ -22,6 +22,6 @@ namespace GISServer.Core.Client.GeocodeService
         [JsonProperty("spatialReference")]
         public SpatialReference SpatialReference { get; set; }
         [JsonProperty("locatorProperties")]
-        public KeyValuePairs LocatorProperties { get; set; }
+        public Attributes LocatorProperties { get; set; }
     }
 }

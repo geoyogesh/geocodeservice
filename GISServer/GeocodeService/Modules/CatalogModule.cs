@@ -33,7 +33,7 @@ namespace GeocodeService.Modules
                         SpecVersion = 1.0,
                     };
                     catalog.Services.Add(new GISServer.Core.Catalog.Service("MapQuest", "GeocodeServer"));
-                    var resultstring = catalog.toJSON();
+                    var resultstring = catalog.toJson();
                     return Services.Utilities.GetJsonResponseObject(resultstring);
                 }
                 else
