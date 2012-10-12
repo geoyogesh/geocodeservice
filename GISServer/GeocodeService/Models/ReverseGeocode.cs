@@ -15,6 +15,8 @@ namespace GeocodeService.Models
 
         public string Location { get; set; }
 
+        public String[] ParsedLocation { get; set; }
+
         public int Distance { get; set; }
 
         public int SpatialReference { get; set; }

@@ -9,6 +9,14 @@ namespace GISServer.Core.Client.Geometry
         {
         }
 
+        public Point(String JsonString)
+        {
+            var p= JsonConvert.DeserializeObject<Point>(JsonString);
+            this.X = p.X;
+            this.Y = p.Y;
+            this.SpatialReference = p.SpatialReference;
+        }
+
         public Point(Double X, Double Y)
         {
             this.X = X;

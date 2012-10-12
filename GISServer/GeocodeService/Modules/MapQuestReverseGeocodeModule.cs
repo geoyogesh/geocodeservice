@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Net;
+using System.Configuration;
 
 namespace GeocodeService.Modules
 {
     public class MapQuestReverseGeocodeModule : Nancy.NancyModule
     {
+        //http://localhost:1979/rest/services/MapQuest/GeocodeServer/reverseGeocode?location=-76.329999%2C40.0755&distance=0&outSR=0&f=HTML
         public MapQuestReverseGeocodeModule()
             : base("rest/services/MapQuest/GeocodeServer/")
         {
@@ -23,7 +25,7 @@ namespace GeocodeService.Modules
                     };
 
                     #region Parameter
-                    
+
 
                     if (Request.Query["outSR"].Value != null)
                     {
@@ -71,7 +73,25 @@ namespace GeocodeService.Modules
                     {
                         if (!((String)Request.Query["location"].Value).Trim().Equals(String.Empty))
                         {
-                            model.Location = Request.Query["location"].Value;   
+                            try
+                            {
+                                var p = new GISServer.Core.Client.Geometry.Point((string)Request.Query["location"].Value);
+
+                                model.Location = Request.Query["location"].Value;
+                                model.ParsedLocation = new String[] { p.X.ToString(), p.Y.ToString() };
+
+                            }
+                            catch (Exception)
+                            {
+                                model.Location = Request.Query["location"].Value;
+
+                                model.ParsedLocation = model.Location.Split(new Char[] { ',' });
+                                if (model.ParsedLocation.Length != 2)
+                                {
+                                    throw new Exception();
+                                }
+
+                            }
                         }
                         else
                         {
@@ -104,50 +124,26 @@ namespace GeocodeService.Modules
 
                     var ReverseGeocodeAddress = new GISServer.Core.Client.GeocodeService.Address();
 
-                    //if ((model.InputGeometries != null) && (!model.HasException))
-                    //{
-                    //    try
-                    //    {
-                    //        input_geom_array = GISServer.Core.Client.Utilities.Parser.GetGeometies(model.InputGeometries);
-                    //        input_geom_array.Project(model.InputSpatialReference, model.OutputSpatialReference);
-                    //    }
-                    //    catch (Exception)
-                    //    {
-                    //        if (!model.HasException)
-                    //        {
-                    //            model.HasException = true;
-                    //        }
-                    //        exception.Error.Details.Add("Unable to project the geometry");
-                    //    }
-                    //}
 
                     if (!model.HasException)
                     {
                         try
                         {
-                            //WebProxy _proxy = new System.Net.WebProxy("http://proxy:8080", true);
-                            //_proxy.UseDefaultCredentials = false;
+                            string url = "http://www.mapquestapi.com/geocoding/v1/reverse?key=" + ConfigurationManager.AppSettings["MapQuestKey"].ToString() + "&json={location:{latLng:{lat:" + model.ParsedLocation[1] + ",lng:" + model.ParsedLocation[0] + "}}}";
+                            HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create(url);
 
-                            //_proxy.Credentials = CredentialCache.DefaultCredentials;
-                            //_proxy.Credentials = new NetworkCredential("nimx", "", "CT");
-
-
-                            HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create("http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluuanu682g%2C85%3Do5-96aghf&json={location:{latLng:{lat:40.0755,lng:-76.329999}}}");
-                            //myReq.Proxy = _proxy;
-
-                            //myReq.Credentials=new 
                             var response = myReq.GetResponse();
                             var receiveStream = response.GetResponseStream();
                             // Pipes the stream to a higher level stream reader with the required encoding format. 
                             var readStream = new System.IO.StreamReader(receiveStream, System.Text.Encoding.UTF8);
-                            var result= readStream.ReadToEnd();
+                            var result = readStream.ReadToEnd();
 
                             var ser = GISServer.Core.Client.GeocodeService.Mapquest.Util.Parse(result);
 
 
                             ReverseGeocodeAddress.Location = new GISServer.Core.Client.Geometry.Point(ser.results[0].locations[0].latLng.lng, ser.results[0].locations[0].latLng.lat, 4326);
 
-                            var att = new GISServer.Core.Attributes("adminArea1",ser.results[0].locations[0].adminArea1,"adminArea1Type", ser.results[0].locations[0].adminArea1Type);
+                            var att = new GISServer.Core.Attributes("street", ser.results[0].locations[0].street, "adminArea5", ser.results[0].locations[0].adminArea5, "adminArea4", ser.results[0].locations[0].adminArea4, "adminArea3", ser.results[0].locations[0].adminArea3, "adminArea1", ser.results[0].locations[0].adminArea1, "postalCode", ser.results[0].locations[0].postalCode);
 
                             ReverseGeocodeAddress.address = att;
 
@@ -166,7 +162,7 @@ namespace GeocodeService.Modules
                     if ((Request.Query["outSR"].Value == null) && (Request.Query["distance"].Value == null) && (Request.Query["location"].Value == null) && !model.Format.Equals("json"))
                     {
                         model.Exception = "";
-                        return View["Reversegeocode",model];
+                        return View["Reversegeocode", model];
                     }
 
 
@@ -184,7 +180,15 @@ namespace GeocodeService.Modules
                     {
                         if (!model.HasException)
                         {
-                            return Services.Utilities.GetJsonResponseObject(model.Result);
+                            if (Request.Query["callback"].Value != null)
+                            {
+                                return Services.Utilities.GetJsonResponseObject(String.Format("{0}({1});", (string)Request.Query["callback"].Value, model.Result));
+                            }
+                            else
+                            {
+                                return Services.Utilities.GetJsonResponseObject(model.Result);
+                            }
+
                         }
                         else
                         {

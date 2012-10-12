@@ -34,44 +34,47 @@ namespace GeocodeService.Modules
                       root.AddressFields = new List<GISServer.Core.Client.GeocodeService.AddressField>();
                       root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
                       {
-                          Name = "Address",
+                          Name = "street",
                           Type = "esriFieldTypeString",
-                          Alias = "Address",
+                          Alias = "street",
                           Required = false
                       });
-
-
-                      root.CandidateFields = new List<GISServer.Core.Client.GeocodeService.AddressField>();
-                      root.CandidateFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
-                      {
-                          Name = "adminArea4",
-                          Type = "esriFieldTypeString",
-                          Alias = "adminArea4",
-                          Required = false
-                      });
-                      root.CandidateFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
-                      {
-                          Name = "adminArea5Type",
-                          Type = "esriFieldTypeString",
-                          Alias = "adminArea5Type",
-                          Required = false
-                      });
-                      root.CandidateFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
-                      {
-                          Name = "adminArea4Type",
-                          Type = "esriFieldTypeString",
-                          Alias = "adminArea4Type",
-                          Required = false
-                      });
-                      root.CandidateFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
+                      root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
                       {
                           Name = "adminArea5",
                           Type = "esriFieldTypeString",
                           Alias = "adminArea5",
                           Required = false
                       });
-
-
+                      root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
+                      {
+                          Name = "adminArea4",
+                          Type = "esriFieldTypeString",
+                          Alias = "adminArea4",
+                          Required = false
+                      });
+                      root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
+                      {
+                          Name = "adminArea3",
+                          Type = "esriFieldTypeString",
+                          Alias = "adminArea3",
+                          Required = false
+                      });
+                      root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
+                      {
+                          Name = "adminArea1",
+                          Type = "esriFieldTypeString",
+                          Alias = "adminArea1",
+                          Required = false
+                      });
+                      root.AddressFields.Add(new GISServer.Core.Client.GeocodeService.AddressField
+                      {
+                          Name = "postalCode",
+                          Type = "esriFieldTypeString",
+                          Alias = "postalCode",
+                          Required = false
+                      });
+                      
 
                       root.IntersectionCandidateFields = new List<GISServer.Core.Client.GeocodeService.AddressField>();
                       root.IntersectionCandidateFields.Add(new GISServer.Core.Client.GeocodeService.AddressField

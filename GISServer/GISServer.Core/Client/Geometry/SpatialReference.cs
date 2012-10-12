@@ -12,9 +12,12 @@ namespace GISServer.Core.Client.Geometry
             this.Wkid = WKID;
         }
 
-        public SpatialReference(string WKT)
+        public SpatialReference(string JsonString)
         {
-            this.Wkt = WKT;
+            var p = JsonConvert.DeserializeObject<SpatialReference>(JsonString);
+
+            this.Wkid = p.Wkid;
+            this.Wkt = p.Wkt;
         }
 
         [JsonProperty("wkid")]
