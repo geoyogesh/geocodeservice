@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GISServer.Core.Client.GeocodeService
 {
-    public class AddressCandidate : GISServer.Core.Base.JSONSerialization
+    public class AddressCandidate 
     {
          [JsonProperty("address")]
         public String Address { get; set; }
@@ -16,6 +16,6 @@ namespace GISServer.Core.Client.GeocodeService
          [JsonProperty("score")]
         public Double Score { get; set; }
          [JsonProperty("attributes")]
-         public List<Dictionary<string, string>> Attributes { get; set; }
+         public Attributes Attributes { get; set; }
     }
 }
