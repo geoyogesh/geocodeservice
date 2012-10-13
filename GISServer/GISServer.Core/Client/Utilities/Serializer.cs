@@ -29,5 +29,20 @@ namespace GISServer.Core.Client.Utilities
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 });
         }
+
+        public static string ToJson4Collection(dynamic obj)
+        {
+            var jsonconverters = new JsonConverter[]
+            {
+                new RawPointConverter()
+            };
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = jsonconverters,
+                Formatting = Formatting.None
+            });
+        }
     }
 }

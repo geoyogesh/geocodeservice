@@ -143,35 +143,44 @@ namespace GeocodeService.Modules
                             {
                                 url = "http://www.mapquestapi.com/geocoding/v1/address?key=" + ConfigurationManager.AppSettings["MapQuestKey"].ToString() + "&inFormat=kvp&outFormat=json&location=" + (string)Request.Query["SingleLine"].Value;
                             }
-                            HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create(url);
-
-                            //myReq.Credentials=new 
-                            var response = myReq.GetResponse();
-                            var receiveStream = response.GetResponseStream();
-                            // Pipes the stream to a higher level stream reader with the required encoding format. 
-                            var readStream = new System.IO.StreamReader(receiveStream, System.Text.Encoding.UTF8);
-                            var result = readStream.ReadToEnd();
+                            var result = HttpReq(url);
 
                             var ser = GISServer.Core.Client.GeocodeService.Mapquest.Util.Parse(result);
 
                             addressCandidates.SpatialReference = new GISServer.Core.Client.Geometry.SpatialReference(model.SpatialReference);
                             addressCandidates.Candidates = new List<GISServer.Core.Client.GeocodeService.AddressCandidate>();
+
+                            var projpoint = new List<GISServer.Core.Client.Geometry.Point>();
+                            var s = new GISServer.Core.Client.Geometry.GeometryArray();
+                            s.GeometryType = "esriGeometryPoint";
+
+                            var gp =new List<GISServer.Core.Client.Geometry.Point>();
                             
+                            foreach (var item in ser.results[0].locations)
+                            {
+                                gp.Add(new GISServer.Core.Client.Geometry.Point(item.displayLatLng.lng,item.displayLatLng.lat));
+                            }
+                            s.Geometries=gp;
 
-                            var ac = new GISServer.Core.Client.GeocodeService.AddressCandidate();
-
-                            ac.Location = new GISServer.Core.Client.Geometry.Point(ser.results[0].locations[0].latLng.lng, ser.results[0].locations[0].latLng.lat);
+                            var gpurl = String.Format("{0}/project?inSR=4326&outSR={1}&geometries={2}&f=pjson", ConfigurationManager.AppSettings["GeocodeServer"], model.SpatialReference, s.ToJson());
 
 
-                            //ac.Location = new GISServer.Core.Client.Geometry.Point(-13046165.572672788, 4036389.8471134957);
+                            var res = HttpReq(gpurl);
 
+                            var geomarray= GISServer.Core.Client.Utilities.Parser.GetGeometies(res);
 
+                            for (int i = 0; i < geomarray.Geometries.Count; i++)
+                            {
+                                var ac = new GISServer.Core.Client.GeocodeService.AddressCandidate();
 
-                            ac.Address = ser.results[0].locations[0].adminArea1 + ", " + ser.results[0].locations[0].adminArea3 + ", " + ser.results[0].locations[0].adminArea4 + ", " + ser.results[0].locations[0].adminArea5;
-                            ac.Score = 100;
-                            ac.Attributes = new GISServer.Core.Attributes("street", ser.results[0].locations[0].street, "adminArea5", ser.results[0].locations[0].adminArea5, "adminArea4", ser.results[0].locations[0].adminArea4, "adminArea3", ser.results[0].locations[0].adminArea3, "adminArea1", ser.results[0].locations[0].adminArea1, "postalCode", ser.results[0].locations[0].postalCode);
-                            addressCandidates.Candidates.Add(ac);
+                                ac.Location = new GISServer.Core.Client.Geometry.Point(geomarray.Geometries[i].X, geomarray.Geometries[i].Y);
 
+                                ac.Score = 100;
+                                ac.Attributes = new GISServer.Core.Attributes("street", ser.results[0].locations[i].street, "adminArea5", ser.results[0].locations[i].adminArea5, "adminArea4", ser.results[0].locations[i].adminArea4, "adminArea3", ser.results[0].locations[i].adminArea3, "adminArea1", ser.results[0].locations[i].adminArea1, "postalCode", ser.results[0].locations[i].postalCode);
+                                addressCandidates.Candidates.Add(ac);
+                            }
+
+                            
 
                         }
                         catch (Exception)
@@ -223,6 +232,19 @@ namespace GeocodeService.Modules
                     return View["FindAddressCandidates", model];
                 }
             };
+        }
+
+        private static string HttpReq(string url)
+        {
+            HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create(url);
+
+            //myReq.Credentials=new 
+            var response = myReq.GetResponse();
+            var receiveStream = response.GetResponseStream();
+            // Pipes the stream to a higher level stream reader with the required encoding format. 
+            var readStream = new System.IO.StreamReader(receiveStream, System.Text.Encoding.UTF8);
+            var result = readStream.ReadToEnd();
+            return result;
         }
     }
 }
